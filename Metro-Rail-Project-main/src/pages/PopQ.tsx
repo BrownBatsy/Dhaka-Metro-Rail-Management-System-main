@@ -21,10 +21,37 @@ const PopQ = () => {
     }
   };
 
-  const handleSubmit = () => {
-    alert(`Your score of ${score}/${quizQuestions.length} has been submitted!`);
-    // TODO: Integrate with API if needed
+  const handleSubmit = async () => {
+    const token = localStorage.getItem("token");
+  
+    if (!token) {
+      alert("User not authenticated.");
+      return;
+    }
+  
+    try {
+      const res = await fetch("http://localhost:8000/api/quiz-results/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Token ${token}`,
+        },
+        body: JSON.stringify({
+          score: score,
+          total: quizQuestions.length,
+        }),
+      });
+  
+      if (!res.ok) throw new Error("Failed to submit");
+  
+      const data = await res.json();
+      alert(`Score submitted! You got ${data.score}/${data.total}.`);
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("Something went wrong submitting your score.");
+    }
   };
+  
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">

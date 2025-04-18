@@ -10,6 +10,8 @@ router.register(r'lost-items', views.LostItemViewSet)
 router.register(r'lost-reports', views.UserLostReportViewSet)
 router.register(r'feedback', views.FeedbackViewSet)
 router.register(r'complaints', views.ComplaintViewSet)
+router.register(r'quiz-results', views.QuizResultViewSet)
+
 
 urlpatterns = [
     path('', include(router.urls)),

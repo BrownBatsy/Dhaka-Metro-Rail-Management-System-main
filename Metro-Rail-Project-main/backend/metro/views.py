@@ -2,11 +2,11 @@ from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.contrib.auth import get_user_model
-from .models import User, Journey, Payment, LostItem, UserLostReport, Feedback, Complaint
+from .models import User, Journey, Payment, LostItem, UserLostReport, Feedback, Complaint, QuizResult
 from .serializers import (
     UserSerializer, JourneySerializer, PaymentSerializer,
     LostItemSerializer, UserLostReportSerializer,
-    FeedbackSerializer, ComplaintSerializer
+    FeedbackSerializer, ComplaintSerializer, QuizResultSerializer
 )
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -68,3 +68,14 @@ class ComplaintViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Complaint.objects.filter(user=self.request.user)
+    
+class QuizResultViewSet(viewsets.ModelViewSet):
+    queryset = QuizResult.objects.all()
+    serializer_class = QuizResultSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return QuizResult.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

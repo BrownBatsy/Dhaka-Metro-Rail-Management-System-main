@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import User, Journey, Payment, LostItem, UserLostReport, Feedback, Complaint
+from .models import User, Journey, Payment, LostItem, UserLostReport, Feedback, Complaint, QuizResult
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,3 +44,9 @@ class ComplaintSerializer(serializers.ModelSerializer):
     class Meta:
         model = Complaint
         fields = '__all__'
+
+class QuizResultSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = QuizResult
+        fields = '__all__'
+        read_only_fields = ['user', 'submitted_at']
