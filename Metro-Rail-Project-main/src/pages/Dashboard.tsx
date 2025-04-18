@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 
+
+
 // Payment method badges
 const PaymentBadge = ({ method }: { method: string }) => {
   switch (method) {
@@ -206,7 +208,7 @@ const Dashboard = () => {
             </TabsList>
             
             <TabsContent value="overview" className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">Total Journeys</CardTitle>
@@ -374,6 +376,7 @@ const Dashboard = () => {
                           <span>Submit Feedback</span>
                         </Button>
                       </Link>
+                      
                     </div>
                   </CardContent>
                 </Card>
@@ -477,6 +480,8 @@ const Dashboard = () => {
                   )}
                 </CardContent>
               </Card>
+              
+
             </TabsContent>
           </Tabs>
         )}

@@ -18,6 +18,7 @@ import Schedule from "./pages/Schedule";
 import About from "./pages/About";
 import Services from "./pages/Services";
 import Payments from "./pages/Payments";
+import PopQ from "./pages/PopQ";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => (
         <Route path="/lost-found" element={<ProtectedRoute><LostFound /></ProtectedRoute>} />
         <Route path="/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
         <Route path="/logout" element={<ProtectedRoute><Logout /></ProtectedRoute>} />
+        <Route path="/quiz" element={<ProtectedRoute><PopQ /></ProtectedRoute>} />
         
         {/* Admin Routes */}
         <Route path="/admin/journeys" element={<AdminRoute><AdminJourneys /></AdminRoute>} />

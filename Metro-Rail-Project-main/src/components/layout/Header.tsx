@@ -45,7 +45,7 @@ const Header = ({ isLoggedIn = false }: { isLoggedIn?: boolean }) => {
           </div>
           
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex space-x-4">
             {isLoggedIn ? (
               /* Logged-in Navigation Links */
               <>
@@ -55,6 +55,8 @@ const Header = ({ isLoggedIn = false }: { isLoggedIn?: boolean }) => {
                 <Link to="/payments" className="text-gray-600 hover:text-gray-900">Payments</Link>
                 <Link to="/lost-found" className="text-gray-600 hover:text-gray-900">Lost & Found</Link>
                 <Link to="/feedback" className="text-gray-600 hover:text-gray-900">Feedback</Link>
+                <Link to="/quiz" className="text-gray-600 hover:text-gray-900">Pop Quiz</Link>
+
                 {isAdmin && (
                   <DropdownMenu>
                     <DropdownMenuTrigger className="text-metro-green hover:text-metro-green-dark font-medium flex items-center">
@@ -130,6 +132,13 @@ const Header = ({ isLoggedIn = false }: { isLoggedIn?: boolean }) => {
                       <span>Feedback</span>
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link to="/quiz" className="flex items-center">
+                      <MessageSquare className="mr-2 h-4 w-4" />
+                      <span>Pop Quiz</span>
+                    </Link>
+                  </DropdownMenuItem>
+
                   {isAdmin && (
                     <>
                       <DropdownMenuSeparator />
@@ -193,7 +202,7 @@ const Header = ({ isLoggedIn = false }: { isLoggedIn?: boolean }) => {
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-gray-200 animate-fade-in">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <div className="px-2 pt-2 pb-3 space-y-0.5 sm:px-3">
             {isLoggedIn ? (
               /* Logged-in Mobile Links */
               <>
@@ -239,6 +248,14 @@ const Header = ({ isLoggedIn = false }: { isLoggedIn?: boolean }) => {
                 >
                   Feedback
                 </Link>
+                <Link
+                  to="/quiz"
+                  className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Pop Quiz
+                </Link>
+
                 {isAdmin && (
                   <>
                     <div className="pt-1 border-t border-gray-200">
