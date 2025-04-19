@@ -9,6 +9,14 @@ from .serializers import (
     FeedbackSerializer, ComplaintSerializer, QuizResultSerializer
 )
 
+from django.db.models import Count, Sum
+from django.http import JsonResponse
+from .models import User, Journey, Payment
+from django.db.models.functions import ExtractYear
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -79,3 +87,28 @@ class QuizResultViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+# Public API for analytics summary
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def public_analytics_summary(request):
+    total_users = User.objects.count()
+    total_journeys = Journey.objects.count()
+    total_payments = Payment.objects.aggregate(total=Sum('amount'))['total'] or 0
+
+    revenue_data = (
+        Payment.objects
+        .annotate(year=ExtractYear('timestamp'))
+        .values('year')
+        .annotate(yearly_total=Sum('amount'))
+        .order_by('year')
+    )
+
+    revenue_by_year = {entry['year']: float(entry['yearly_total']) for entry in revenue_data}
+
+    return JsonResponse({
+        "total_users": total_users,
+        "total_journeys": total_journeys,
+        "total_payments": float(total_payments),
+        "revenue_by_year": revenue_by_year
+    }) 

@@ -1,6 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from . import views
+from .views import public_analytics_summary
 
 router = DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -15,4 +16,5 @@ router.register(r'quiz-results', views.QuizResultViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('analytics/summary/', public_analytics_summary, name='public-analytics'),
 ]

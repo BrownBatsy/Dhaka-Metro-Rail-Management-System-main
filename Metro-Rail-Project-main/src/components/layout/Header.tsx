@@ -11,6 +11,8 @@ import {
   DropdownMenuLabel 
 } from "@/components/ui/dropdown-menu";
 
+
+
 const Header = ({ isLoggedIn = false }: { isLoggedIn?: boolean }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [userData, setUserData] = useState<any>(null);
@@ -50,7 +52,22 @@ const Header = ({ isLoggedIn = false }: { isLoggedIn?: boolean }) => {
               /* Logged-in Navigation Links */
               <>
                 <Link to="/" className="text-gray-600 hover:text-gray-900">Home</Link>
-                <Link to="/dashboard" className="text-gray-600 hover:text-gray-900">Dashboard</Link>
+                
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="text-sm text-gray-600 hover:text-gray-900 font-medium flex items-center">
+                    Dashboard
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem asChild>
+                      <Link to="/dashboard" className="w-full text-sm">User Dashboard</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/analytics" className="w-full text-sm">Metro Analytics</Link>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
                 <Link to="/journeys" className="text-gray-600 hover:text-gray-900">My Journeys</Link>
                 <Link to="/payments" className="text-gray-600 hover:text-gray-900">Payments</Link>
                 <Link to="/lost-found" className="text-gray-600 hover:text-gray-900">Lost & Found</Link>

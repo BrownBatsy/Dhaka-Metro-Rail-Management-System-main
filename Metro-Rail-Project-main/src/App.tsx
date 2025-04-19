@@ -19,6 +19,7 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import Payments from "./pages/Payments";
 import PopQ from "./pages/PopQ";
+import Analytics from "./pages/Analytics";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,7 @@ const App = () => (
         <Route path="/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
         <Route path="/logout" element={<ProtectedRoute><Logout /></ProtectedRoute>} />
         <Route path="/quiz" element={<ProtectedRoute><PopQ /></ProtectedRoute>} />
+        <Route path="/analytics" element={<Analytics />} />
         
         {/* Admin Routes */}
         <Route path="/admin/journeys" element={<AdminRoute><AdminJourneys /></AdminRoute>} />
