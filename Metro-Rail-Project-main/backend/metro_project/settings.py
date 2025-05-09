@@ -38,6 +38,8 @@ MIDDLEWARE = [
 ROOT_URLCONF = "metro_project.urls"
 AUTH_USER_MODEL = "metro.User"
 
+LOGIN_URL = '/login/'  # Set a valid login URL
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -131,12 +133,11 @@ CORS_ALLOW_HEADERS = [
 # REST Framework settings
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.TokenAuthentication",  # Ensure token-based authentication is enabled
         "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
+        "rest_framework.permissions.IsAuthenticated",  # Default permission for authenticated users
     ],
 }
 
@@ -154,4 +155,4 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8083",
     "http://127.0.0.1:8084",
     "http://127.0.0.1:8085",
-] 
+]

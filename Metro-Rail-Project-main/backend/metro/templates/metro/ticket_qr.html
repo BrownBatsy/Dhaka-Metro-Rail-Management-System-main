@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ticket QR Code</title>
+</head>
+<body>
+    <h1>Ticket QR Code for {{ ticket.ticket_id }}</h1>
+    <p>Destination: {{ ticket.destination }}</p>
+    <p>Price: ${{ ticket.price }}</p>
+    <img src="data:image/png;base64,{{ qr_image | safe }}" alt="QR Code" />
+    <p>Scan this QR code to access your ticket quickly.</p>
+</body>
+</html>

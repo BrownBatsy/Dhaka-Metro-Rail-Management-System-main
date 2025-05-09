@@ -19,69 +19,147 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import Payments from "./pages/Payments";
 import PopQ from "./pages/PopQ";
+import CreateTicket from "./pages/CreateTicket";
+import TicketDetails from "./pages/TicketDetails";
+import LiveTracking from "./pages/LiveTracking";
+import MedicalHelp from "./pages/MedicalHelp";
 
 const queryClient = new QueryClient();
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const isAuthenticated = localStorage.getItem("token") !== null;
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  return children;
+	const isAuthenticated = localStorage.getItem("token") !== null;
+
+	if (!isAuthenticated) {
+		return <Navigate to="/login" replace />;
+	}
+
+	return children;
 };
 
 // Admin route component
 const AdminRoute = ({ children }: { children: JSX.Element }) => {
-  const userData = JSON.parse(localStorage.getItem("user") || "{}");
-  const isAdmin = userData?.isAdmin || false;
-  const isAuthenticated = localStorage.getItem("token") !== null;
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  if (!isAdmin) {
-    return <Navigate to="/dashboard" replace />;
-  }
-  
-  return children;
+	const userData = JSON.parse(localStorage.getItem("user") || "{}");
+	const isAdmin = userData?.isAdmin || false;
+	const isAuthenticated = localStorage.getItem("token") !== null;
+
+	if (!isAuthenticated) {
+		return <Navigate to="/login" replace />;
+	}
+
+	if (!isAdmin) {
+		return <Navigate to="/dashboard" replace />;
+	}
+
+	return children;
 };
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <Toaster />
-    <Sonner />
-    <BrowserRouter>
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Index />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/services" element={<Services />} />
-        <Route path="/schedule" element={<Schedule />} />
-        
-        {/* Protected User Routes */}
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/journeys" element={<ProtectedRoute><Journeys /></ProtectedRoute>} />
-        <Route path="/payments" element={<ProtectedRoute><Payments /></ProtectedRoute>} />
-        <Route path="/lost-found" element={<ProtectedRoute><LostFound /></ProtectedRoute>} />
-        <Route path="/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
-        <Route path="/logout" element={<ProtectedRoute><Logout /></ProtectedRoute>} />
-        <Route path="/quiz" element={<ProtectedRoute><PopQ /></ProtectedRoute>} />
-        
-        {/* Admin Routes */}
-        <Route path="/admin/journeys" element={<AdminRoute><AdminJourneys /></AdminRoute>} />
-        <Route path="/admin/lost-found" element={<AdminRoute><AdminLostFound /></AdminRoute>} />
-        
-        {/* Catch-all Route */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
-  </QueryClientProvider>
+	<QueryClientProvider client={queryClient}>
+		<Toaster />
+		<Sonner />
+		<BrowserRouter>
+			<Routes>
+				{/* Public Routes */}
+				<Route path="/" element={<Index />} />
+				<Route path="/login" element={<Login />} />
+				<Route path="/register" element={<Register />} />
+				<Route path="/about" element={<About />} />
+				<Route path="/services" element={<Services />} />
+				<Route path="/schedule" element={<Schedule />} />
+				<Route path="/create-ticket" element={<CreateTicket />} />
+				<Route path="/ticket/:ticketId" element={<TicketDetails />} />
+				<Route path="/live-tracking" element={<LiveTracking />} />
+
+				{/* Protected User Routes */}
+				<Route
+					path="/dashboard"
+					element={
+						<ProtectedRoute>
+							<Dashboard />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/journeys"
+					element={
+						<ProtectedRoute>
+							<Journeys />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/payments"
+					element={
+						<ProtectedRoute>
+							<Payments />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/lost-found"
+					element={
+						<ProtectedRoute>
+							<LostFound />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/feedback"
+					element={
+						<ProtectedRoute>
+							<Feedback />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/logout"
+					element={
+						<ProtectedRoute>
+							<Logout />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/quiz"
+					element={
+						<ProtectedRoute>
+							<PopQ />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/medical-help"
+					element={
+						<ProtectedRoute>
+							<MedicalHelp />
+						</ProtectedRoute>
+					}
+				/>
+
+				{/* Admin Routes */}
+				<Route
+					path="/admin/journeys"
+					element={
+						<AdminRoute>
+							<AdminJourneys />
+						</AdminRoute>
+					}
+				/>
+				<Route
+					path="/admin/lost-found"
+					element={
+						<AdminRoute>
+							<AdminLostFound />
+						</AdminRoute>
+					}
+				/>
+
+				{/* Catch-all Route */}
+				<Route path="*" element={<NotFound />} />
+			</Routes>
+		</BrowserRouter>
+	</QueryClientProvider>
 );
 
 export default App;
