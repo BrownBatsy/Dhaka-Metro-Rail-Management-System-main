@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 // UI Components
 import {
@@ -70,6 +71,7 @@ interface Payment {
 
 const Journeys: React.FC = () => {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [activeTab, setActiveTab] = useState("journeys");
   const [isLoading, setIsLoading] = useState(true);
   const [journeys, setJourneys] = useState<Journey[]>([]);
@@ -86,7 +88,7 @@ const Journeys: React.FC = () => {
     const userDataStr = localStorage.getItem("user");
     
     if (!token || !userDataStr) {
-      toast.error("Please login to view your journeys");
+      toast.error(t("pleaseLoginToViewJourneys"));
       navigate("/login");
       return;
     }
@@ -96,10 +98,10 @@ const Journeys: React.FC = () => {
       setUserData(parsedUserData);
     } catch (error) {
       console.error("Error parsing user data:", error);
-      toast.error("Error loading user data");
+      toast.error(t("errorLoadingUserData"));
       navigate("/login");
     }
-  }, [navigate]);
+  }, [navigate, t]);
 
   // Fetch journeys and payments
   useEffect(() => {
@@ -126,8 +128,8 @@ const Journeys: React.FC = () => {
               setJourneys(journeyData.map((item: any) => ({
                 id: item.id.toString(),
                 date: item.date || new Date().toISOString(),
-                startStation: item.start_station || "Unknown",
-                endStation: item.end_station || "Unknown",
+                startStation: item.start_station || t("unknown"),
+                endStation: item.end_station || t("unknown"),
                 status: item.status || "completed",
                 fare: item.fare || 0,
                 paymentMethod: item.payment_method || "card"
@@ -247,13 +249,13 @@ const Journeys: React.FC = () => {
         }, 1000);
       } catch (error) {
         console.error("Error fetching data:", error);
-        toast.error("Failed to load your data");
+        toast.error(t("failedToLoadData"));
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [userData]);
+  }, [userData, t]);
 
   // Filter journeys based on search term and status
   const filteredJourneys = journeys.filter((journey) => {
@@ -298,7 +300,7 @@ const Journeys: React.FC = () => {
         return (
           <Badge className="bg-green-500">
             <CheckCircle className="h-3 w-3 mr-1" />
-            {status}
+            {t(status)}
           </Badge>
         );
       case "cancelled":
@@ -306,7 +308,7 @@ const Journeys: React.FC = () => {
         return (
           <Badge variant="destructive">
             <XCircle className="h-3 w-3 mr-1" />
-            {status}
+            {t(status)}
           </Badge>
         );
       case "in-progress":
@@ -314,11 +316,11 @@ const Journeys: React.FC = () => {
         return (
           <Badge variant="outline" className="text-amber-500 border-amber-500">
             <Clock className="h-3 w-3 mr-1" />
-            {status}
+            {t(status)}
           </Badge>
         );
       default:
-        return <Badge>{status}</Badge>;
+        return <Badge>{t(status)}</Badge>;
     }
   };
 
@@ -333,14 +335,14 @@ const Journeys: React.FC = () => {
     
     // Headers
     if (type === "journeys") {
-      csvContent = "ID,Date,From,To,Status,Fare,Payment Method\n";
+      csvContent = `${t("csvJourneyHeaders")}\n`;
       data.forEach(journey => {
-        csvContent += `${journey.id},${journey.date},${journey.startStation},${journey.endStation},${journey.status},${journey.fare},${journey.paymentMethod}\n`;
+        csvContent += `${journey.id},${journey.date},${journey.startStation},${journey.endStation},${t(journey.status)},${journey.fare},${journey.paymentMethod}\n`;
       });
     } else {
-      csvContent = "ID,Date,Amount,Method,Status,Journey ID\n";
+      csvContent = `${t("csvPaymentHeaders")}\n`;
       data.forEach(payment => {
-        csvContent += `${payment.id},${payment.date},${payment.amount},${payment.method},${payment.status},${payment.journey || "-"}\n`;
+        csvContent += `${payment.id},${payment.date},${payment.amount},${payment.method},${t(payment.status)},${payment.journey || "-"}\n`;
       });
     }
     
@@ -361,8 +363,8 @@ const Journeys: React.FC = () => {
       <div className="container mx-auto py-8">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Loading your data...</CardTitle>
-            <CardDescription>Please wait while we retrieve your journeys and payments</CardDescription>
+            <CardTitle className="text-2xl">{t("loadingData")}</CardTitle>
+            <CardDescription>{t("loadingDataDesc")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             {[1, 2, 3, 4].map((i) => (
@@ -380,11 +382,26 @@ const Journeys: React.FC = () => {
   return (
     <Layout isLoggedIn={true}>
       <div className="container mx-auto px-4 py-8">
+        {/* Language Switcher */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => i18n.changeLanguage('en')}
+            className={`px-3 py-1 mr-2 rounded ${i18n.language === 'en' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          >
+            English
+          </button>
+          <button
+            onClick={() => i18n.changeLanguage('bn')}
+            className={`px-3 py-1 rounded ${i18n.language === 'bn' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          >
+            বাংলা
+          </button>
+        </div>
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl font-bold">Travel History</CardTitle>
+            <CardTitle className="text-2xl font-bold">{t("travelHistory")}</CardTitle>
             <CardDescription>
-              View and manage your journey and payment history
+              {t("viewManageJourneyPayment")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -395,8 +412,8 @@ const Journeys: React.FC = () => {
               className="w-full"
             >
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="journeys">Journeys</TabsTrigger>
-                <TabsTrigger value="payments">Payments</TabsTrigger>
+                <TabsTrigger value="journeys">{t("journeysTab")}</TabsTrigger>
+                <TabsTrigger value="payments">{t("paymentsTab")}</TabsTrigger>
               </TabsList>
 
               <TabsContent value="journeys">
@@ -404,7 +421,7 @@ const Journeys: React.FC = () => {
                   <div className="flex flex-col md:flex-row justify-between gap-4">
                     <div className="flex-1">
                       <Input
-                        placeholder="Search journeys by station or ID..."
+                        placeholder={t("searchJourneysPlaceholder")}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />
@@ -416,13 +433,13 @@ const Journeys: React.FC = () => {
                       >
                         <SelectTrigger className="w-[180px]">
                           <Filter className="h-4 w-4 mr-2" />
-                          <SelectValue placeholder="Filter by status" />
+                          <SelectValue placeholder={t("filterByStatus")} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">All Statuses</SelectItem>
-                          <SelectItem value="completed">Completed</SelectItem>
-                          <SelectItem value="in-progress">In Progress</SelectItem>
-                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                          <SelectItem value="all">{t("allStatuses")}</SelectItem>
+                          <SelectItem value="completed">{t("completed")}</SelectItem>
+                          <SelectItem value="in-progress">{t("inProgress")}</SelectItem>
+                          <SelectItem value="cancelled">{t("cancelled")}</SelectItem>
                         </SelectContent>
                       </Select>
                       
@@ -432,7 +449,7 @@ const Journeys: React.FC = () => {
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {startDate && endDate
                               ? `${format(startDate, "PPP")} - ${format(endDate, "PPP")}`
-                              : "Filter by date range"}
+                              : t("filterByDateRange")}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
@@ -458,28 +475,28 @@ const Journeys: React.FC = () => {
                         disabled={filteredJourneys.length === 0}
                       >
                         <Download className="h-4 w-4 mr-2" />
-                        Export
+                        {t("export")}
                       </Button>
                     </div>
                   </div>
 
                   {filteredJourneys.length === 0 ? (
                     <div className="text-center py-8">
-                      <p className="text-gray-500">No journeys found matching your criteria</p>
+                      <p className="text-gray-500">{t("noJourneysFound")}</p>
                     </div>
                   ) : (
                     <Table>
                       <TableCaption>
-                        {filteredJourneys.length} journeys found
+                        {t("journeysFound", { count: filteredJourneys.length })}
                       </TableCaption>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Date & Time</TableHead>
-                          <TableHead>From</TableHead>
-                          <TableHead>To</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead className="text-right">Fare</TableHead>
-                          <TableHead>Payment</TableHead>
+                          <TableHead>{t("dateTime")}</TableHead>
+                          <TableHead>{t("from")}</TableHead>
+                          <TableHead>{t("to")}</TableHead>
+                          <TableHead>{t("status")}</TableHead>
+                          <TableHead className="text-right">{t("fare")}</TableHead>
+                          <TableHead>{t("payment")}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -500,11 +517,11 @@ const Journeys: React.FC = () => {
                             </TableCell>
                             <TableCell>{renderStatusBadge(journey.status)}</TableCell>
                             <TableCell className="text-right font-medium">
-                              {journey.fare} Tk
+                              {journey.fare} {t("tk")}
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline">
-                                {journey.paymentMethod === "card" ? "Card" : "Mobile Banking"}
+                                {journey.paymentMethod === "card" ? t("card") : t("mobileBanking")}
                               </Badge>
                             </TableCell>
                           </TableRow>
@@ -520,7 +537,7 @@ const Journeys: React.FC = () => {
                   <div className="flex flex-col md:flex-row justify-between gap-4">
                     <div className="flex-1">
                       <Input
-                        placeholder="Search payments by ID or method..."
+                        placeholder={t("searchPaymentsPlaceholder")}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                       />
@@ -532,13 +549,13 @@ const Journeys: React.FC = () => {
                       >
                         <SelectTrigger className="w-[180px]">
                           <Filter className="h-4 w-4 mr-2" />
-                          <SelectValue placeholder="Filter by status" />
+                          <SelectValue placeholder={t("filterByStatus")} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">All Statuses</SelectItem>
-                          <SelectItem value="successful">Successful</SelectItem>
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="failed">Failed</SelectItem>
+                          <SelectItem value="all">{t("allStatuses")}</SelectItem>
+                          <SelectItem value="successful">{t("successful")}</SelectItem>
+                          <SelectItem value="pending">{t("pending")}</SelectItem>
+                          <SelectItem value="failed">{t("failed")}</SelectItem>
                         </SelectContent>
                       </Select>
                       
@@ -548,7 +565,7 @@ const Journeys: React.FC = () => {
                             <CalendarIcon className="mr-2 h-4 w-4" />
                             {startDate && endDate
                               ? `${format(startDate, "PPP")} - ${format(endDate, "PPP")}`
-                              : "Filter by date range"}
+                              : t("filterByDateRange")}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
@@ -574,28 +591,28 @@ const Journeys: React.FC = () => {
                         disabled={filteredPayments.length === 0}
                       >
                         <Download className="h-4 w-4 mr-2" />
-                        Export
+                        {t("export")}
                       </Button>
                     </div>
                   </div>
 
                   {filteredPayments.length === 0 ? (
                     <div className="text-center py-8">
-                      <p className="text-gray-500">No payments found matching your criteria</p>
+                      <p className="text-gray-500">{t("noPaymentsFound")}</p>
                     </div>
                   ) : (
                     <Table>
                       <TableCaption>
-                        {filteredPayments.length} payments found
+                        {t("paymentsFound", { count: filteredPayments.length })}
                       </TableCaption>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>Date & Time</TableHead>
-                          <TableHead>Payment ID</TableHead>
-                          <TableHead>Amount</TableHead>
-                          <TableHead>Method</TableHead>
-                          <TableHead>Status</TableHead>
-                          <TableHead>Journey</TableHead>
+                          <TableHead>{t("dateTime")}</TableHead>
+                          <TableHead>{t("paymentId")}</TableHead>
+                          <TableHead>{t("amount")}</TableHead>
+                          <TableHead>{t("method")}</TableHead>
+                          <TableHead>{t("status")}</TableHead>
+                          <TableHead>{t("journey")}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -604,11 +621,11 @@ const Journeys: React.FC = () => {
                             <TableCell>{formatDate(payment.date)}</TableCell>
                             <TableCell>{payment.id}</TableCell>
                             <TableCell className="font-medium">
-                              {payment.amount} Tk
+                              {payment.amount} {t("tk")}
                             </TableCell>
                             <TableCell>
                               <Badge variant="outline">
-                                {payment.method === "card" ? "Card" : "Mobile Banking"}
+                                {payment.method === "card" ? t("card") : t("mobileBanking")}
                               </Badge>
                             </TableCell>
                             <TableCell>{renderStatusBadge(payment.status)}</TableCell>

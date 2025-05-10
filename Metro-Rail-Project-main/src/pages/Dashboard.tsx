@@ -7,8 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-
-
+import { useTranslation } from "react-i18next"; // <-- Add this
 
 // Payment method badges
 const PaymentBadge = ({ method }: { method: string }) => {
@@ -51,7 +50,8 @@ const Dashboard = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-  
+  const { t, i18n } = useTranslation(); // <-- Add this
+
   useEffect(() => {
     const loadUserData = () => {
       const userDataStr = localStorage.getItem('user');
@@ -172,10 +172,25 @@ const Dashboard = () => {
   return (
     <Layout isLoggedIn={true}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Language Switcher */}
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={() => i18n.changeLanguage('en')}
+            className={`px-3 py-1 mr-2 rounded ${i18n.language === 'en' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          >
+            English
+          </button>
+          <button
+            onClick={() => i18n.changeLanguage('bn')}
+            className={`px-3 py-1 rounded ${i18n.language === 'bn' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
+          >
+            বাংলা
+          </button>
+        </div>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-            <p className="mt-1 text-gray-600">Welcome back, {userData?.name || 'User'}</p>
+            <h1 className="text-3xl font-bold text-gray-900">{t("dashboardTitle")}</h1>
+            <p className="mt-1 text-gray-600">{t("dashboardWelcome", { name: userData?.name || t("user") })}</p>
           </div>
           <div className="mt-4 md:mt-0 space-x-2">
             {isAdmin && (
@@ -183,21 +198,19 @@ const Dashboard = () => {
                 <Link to="/admin/journeys">
                   <Button variant="outline" className="ml-2">
                     <ShieldCheck className="mr-2 h-4 w-4" />
-                    Admin Panel
+                    {t("adminPanel")}
                   </Button>
                 </Link>
                 <Link to="/admin/alerts">
                   <Button variant="outline" className="ml-2">
                     <AlertCircle className="mr-2 h-4 w-4" />
-                    Alert
+                    {t("alert")}
                   </Button>
                 </Link>
               </>
             )}
           </div>
-
         </div>
-        
         {isLoading ? (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="h-8 w-8 animate-spin text-metro-green" />
@@ -206,62 +219,58 @@ const Dashboard = () => {
           <Tabs defaultValue="overview" onValueChange={setActiveTab} className="space-y-6">
             <TabsList className="grid w-full md:w-auto grid-cols-3 md:inline-flex">
               <TabsTrigger value="overview" className={activeTab === "overview" ? "metro-tab-active" : "metro-tab"}>
-                Overview
+                {t("overview")}
               </TabsTrigger>
               <TabsTrigger value="journeys" className={activeTab === "journeys" ? "metro-tab-active" : "metro-tab"}>
-                Journeys
+                {t("journeysTab")}
               </TabsTrigger>
               <TabsTrigger value="payments" className={activeTab === "payments" ? "metro-tab-active" : "metro-tab"}>
-                Payments
+                {t("paymentsTab")}
               </TabsTrigger>
             </TabsList>
-            
             <TabsContent value="overview" className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Journeys</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t("totalJourneys")}</CardTitle>
                     <Calendar className="h-4 w-4 text-metro-green" />
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">{monthlyStats.journeys}</div>
-                    <p className="text-xs text-gray-500 mt-1">This month</p>
+                    <p className="text-xs text-gray-500 mt-1">{t("thisMonth")}</p>
                   </CardContent>
                 </Card>
-                
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Spent</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t("totalSpent")}</CardTitle>
                     <CreditCard className="h-4 w-4 text-metro-blue" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-2xl font-bold">{totalSpent.toFixed(2)} Tk</div>
-                    <p className="text-xs text-gray-500 mt-1">This month</p>
+                    <div className="text-2xl font-bold">{totalSpent.toFixed(2)} {t("tk")}</div>
+                    <p className="text-xs text-gray-500 mt-1">{t("thisMonth")}</p>
                   </CardContent>
                 </Card>
-                
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Most Frequent Route</CardTitle>
+                    <CardTitle className="text-sm font-medium">{t("mostFrequentRoute")}</CardTitle>
                     <MapPin className="h-4 w-4 text-metro-green" />
                   </CardHeader>
                   <CardContent>
-                    <div className="text-sm font-medium">{monthlyStats.mostFrequentRoute || 'No journeys yet'}</div>
+                    <div className="text-sm font-medium">{monthlyStats.mostFrequentRoute || t("noJourneysYet")}</div>
                     {monthlyStats.mostFrequentCount > 0 && (
-                      <p className="text-xs text-gray-500 mt-1">{monthlyStats.mostFrequentCount} times this month</p>
+                      <p className="text-xs text-gray-500 mt-1">{t("timesThisMonth", { count: monthlyStats.mostFrequentCount })}</p>
                     )}
                   </CardContent>
                 </Card>
               </div>
-              
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle>Recent Journeys</CardTitle>
-                    <CardDescription>Your latest metro rail trips</CardDescription>
+                    <CardTitle>{t("recentJourneys")}</CardTitle>
+                    <CardDescription>{t("latestTrips")}</CardDescription>
                   </div>
                   <Link to="/journeys">
-                    <Button variant="outline" size="sm">View All</Button>
+                    <Button variant="outline" size="sm">{t("viewAll")}</Button>
                   </Link>
                 </CardHeader>
                 <CardContent>
@@ -271,7 +280,6 @@ const Dashboard = () => {
                         const payment = journey.payment 
                           ? payments.find(p => p.id === journey.payment) 
                           : null;
-                          
                         return (
                           <div key={journey.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-md">
                             <div className="flex items-center">
@@ -284,7 +292,7 @@ const Dashboard = () => {
                               </div>
                             </div>
                             <div className="text-right">
-                              <p className="font-medium">{journey.fare} Tk</p>
+                              <p className="font-medium">{journey.fare} {t("tk")}</p>
                               {payment && (
                                 <div className="mt-1">
                                   <PaymentBadge method={payment.method} />
@@ -296,29 +304,28 @@ const Dashboard = () => {
                       })
                     ) : (
                       <div className="text-center py-8 text-gray-500">
-                        <p>No journey records found</p>
+                        <p>{t("noJourneyRecords")}</p>
                       </div>
                     )}
                   </div>
                   <div className="mt-4 text-center">
                     <Link to="/journeys">
-                      <Button variant="outline" className="w-full">View All Journeys</Button>
+                      <Button variant="outline" className="w-full">{t("viewAllJourneys")}</Button>
                     </Link>
                   </div>
                 </CardContent>
               </Card>
-              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle>Spending Patterns</CardTitle>
-                    <CardDescription>Your transportation expenses</CardDescription>
+                    <CardTitle>{t("spendingPatterns")}</CardTitle>
+                    <CardDescription>{t("transportationExpenses")}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-sm font-medium">Monthly Limit</p>
+                          <p className="text-sm font-medium">{t("monthlyLimit")}</p>
                           <p className="text-sm font-medium">
                             {totalSpent > 0 ? Math.min(Math.round((totalSpent / 1000) * 100), 100) : 0}%
                           </p>
@@ -327,11 +334,10 @@ const Dashboard = () => {
                           value={totalSpent > 0 ? Math.min(Math.round((totalSpent / 1000) * 100), 100) : 0} 
                           className="h-2 bg-gray-200" 
                         />
-                        <p className="mt-1 text-xs text-gray-500">{totalSpent.toFixed(2)} Tk of 1000 Tk budget used</p>
+                        <p className="mt-1 text-xs text-gray-500">{t("budgetUsed", { used: totalSpent.toFixed(2) })}</p>
                       </div>
-                      
                       <div className="pt-4 border-t">
-                        <p className="font-medium mb-2">Payment Methods</p>
+                        <p className="font-medium mb-2">{t("paymentMethods")}</p>
                         <div className="grid grid-cols-2 gap-2">
                           {Object.entries(paymentMethodCounts).length > 0 ? (
                             Object.entries(paymentMethodCounts).map(([method, data]) => (
@@ -340,12 +346,12 @@ const Dashboard = () => {
                                   <PaymentBadge method={method} />
                                   <span className="text-xs text-gray-500 ml-2">({data.count})</span>
                                 </div>
-                                <p className="text-sm font-medium">{data.amount.toFixed(2)} Tk</p>
+                                <p className="text-sm font-medium">{data.amount.toFixed(2)} {t("tk")}</p>
                               </div>
                             ))
                           ) : (
                             <div className="col-span-2 text-center py-4 text-gray-500">
-                              <p>No payment records</p>
+                              <p>{t("noPaymentRecords")}</p>
                             </div>
                           )}
                         </div>
@@ -353,54 +359,51 @@ const Dashboard = () => {
                     </div>
                   </CardContent>
                 </Card>
-                
                 <Card>
                   <CardHeader>
-                    <CardTitle>Quick Actions</CardTitle>
-                    <CardDescription>Commonly used features</CardDescription>
+                    <CardTitle>{t("quickActions")}</CardTitle>
+                    <CardDescription>{t("commonlyUsedFeatures")}</CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="grid grid-cols-2 gap-3">
                       <Link to="/lost-found" className="w-full">
                         <Button variant="outline" className="flex flex-col items-center justify-center h-24 border-dashed w-full">
                           <FileText className="h-8 w-8 mb-2 text-metro-green" />
-                          <span>Report Lost Item</span>
+                          <span>{t("reportLostItem")}</span>
                         </Button>
                       </Link>
                       <Link to="/payments" className="w-full">
                         <Button variant="outline" className="flex flex-col items-center justify-center h-24 border-dashed w-full">
                           <CreditCard className="h-8 w-8 mb-2 text-metro-blue" />
-                          <span>Make Payment</span>
+                          <span>{t("makePayment")}</span>
                         </Button>
                       </Link>
                       <Link to="/schedule" className="w-full">
                         <Button variant="outline" className="flex flex-col items-center justify-center h-24 border-dashed w-full">
                           <Clock className="h-8 w-8 mb-2 text-metro-green" />
-                          <span>Check Schedule</span>
+                          <span>{t("checkSchedule")}</span>
                         </Button>
                       </Link>
                       <Link to="/feedback" className="w-full">
                         <Button variant="outline" className="flex flex-col items-center justify-center h-24 border-dashed w-full">
                           <AlertCircle className="h-8 w-8 mb-2 text-metro-blue" />
-                          <span>Submit Feedback</span>
+                          <span>{t("submitFeedback")}</span>
                         </Button>
                       </Link>
-                      
                     </div>
                   </CardContent>
                 </Card>
               </div>
             </TabsContent>
-            
             <TabsContent value="journeys">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle>Journey History</CardTitle>
-                    <CardDescription>Complete list of your metro rail trips</CardDescription>
+                    <CardTitle>{t("journeyHistory")}</CardTitle>
+                    <CardDescription>{t("completeTripList")}</CardDescription>
                   </div>
                   <Link to="/journeys">
-                    <Button variant="outline" size="sm">View All</Button>
+                    <Button variant="outline" size="sm">{t("viewAll")}</Button>
                   </Link>
                 </CardHeader>
                 <CardContent>
@@ -409,10 +412,10 @@ const Dashboard = () => {
                       <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Route</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fare</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("date")}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("route")}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("fare")}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("payment")}</th>
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -420,17 +423,16 @@ const Dashboard = () => {
                             const payment = journey.payment 
                               ? payments.find(p => p.id === journey.payment) 
                               : null;
-                              
                             return (
                               <tr key={journey.id}>
                                 <td className="px-6 py-4 whitespace-nowrap">{journey.date}</td>
                                 <td className="px-6 py-4">{journey.route}</td>
-                                <td className="px-6 py-4 whitespace-nowrap">{journey.fare} Tk</td>
+                                <td className="px-6 py-4 whitespace-nowrap">{journey.fare} {t("tk")}</td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                   {payment ? (
                                     <PaymentBadge method={payment.method} />
                                   ) : (
-                                    <span className="text-red-500 text-sm">Unpaid</span>
+                                    <span className="text-red-500 text-sm">{t("unpaid")}</span>
                                   )}
                                 </td>
                               </tr>
@@ -441,18 +443,17 @@ const Dashboard = () => {
                     </div>
                   ) : (
                     <div className="text-center py-8 text-gray-500">
-                      <p>No journey records found</p>
+                      <p>{t("noJourneyRecords")}</p>
                     </div>
                   )}
                 </CardContent>
               </Card>
             </TabsContent>
-            
             <TabsContent value="payments">
               <Card>
                 <CardHeader>
-                  <CardTitle>Payment History</CardTitle>
-                  <CardDescription>Record of all your metro rail payments</CardDescription>
+                  <CardTitle>{t("paymentHistory")}</CardTitle>
+                  <CardDescription>{t("paymentRecord")}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   {payments.length > 0 ? (
@@ -460,10 +461,10 @@ const Dashboard = () => {
                       <table className="min-w-full divide-y divide-gray-200">
                         <thead className="bg-gray-50">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reference</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("date")}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("method")}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("reference")}</th>
+                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t("amount")}</th>
                           </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
@@ -476,7 +477,7 @@ const Dashboard = () => {
                                 <PaymentBadge method={payment.method} />
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">{payment.reference}</td>
-                              <td className="px-6 py-4 whitespace-nowrap">{payment.amount} Tk</td>
+                              <td className="px-6 py-4 whitespace-nowrap">{payment.amount} {t("tk")}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -484,13 +485,11 @@ const Dashboard = () => {
                     </div>
                   ) : (
                     <div className="text-center py-8 text-gray-500">
-                      <p>No payment records found</p>
+                      <p>{t("noPaymentRecords")}</p>
                     </div>
                   )}
                 </CardContent>
               </Card>
-              
-
             </TabsContent>
           </Tabs>
         )}
