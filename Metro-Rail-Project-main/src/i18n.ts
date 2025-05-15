@@ -215,14 +215,15 @@ const resources = {
       ],
       'quiz.completed': 'Quiz Completed!',
       'quiz.finalScore': 'Your final score is {{score}} out of {{total}}',
-      'quiz.submitScore': 'Submit Score'
+      'quiz.submitScore': 'Submit Score',
+      "quiz.questionCount": "Question {{current}} of {{total}}"
     }
   },
   bn: {
 
     translation: {
       
-       dashboardTitle: "ড্যাশবোর্ড",
+      dashboardTitle: "ড্যাশবোর্ড",
       dashboardWelcome: "ফিরে আসার জন্য স্বাগতম, {{name}}",
       user: "ইউজার",
       adminPanel: "অ্যাডমিন প্যানেল",
@@ -429,7 +430,9 @@ const resources = {
       ],
       'quiz.completed': 'কুইজ সম্পন্ন!',
       'quiz.finalScore': 'আপনি পেয়েছেন {{total}} এর মধ্যে {{score}}',
-      'quiz.submitScore': 'স্কোর জমা দিন'
+      'quiz.submitScore': 'স্কোর জমা দিন',
+      "quiz.questionCount": "প্রশ্ন {{current}} / {{total}}"
+      
     }
   }
 };

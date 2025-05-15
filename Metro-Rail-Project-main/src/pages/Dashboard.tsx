@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { useTranslation } from "react-i18next"; // <-- Add this
+import { useTranslation } from "react-i18next";
 
 // Payment method badges
 const PaymentBadge = ({ method }: { method: string }) => {

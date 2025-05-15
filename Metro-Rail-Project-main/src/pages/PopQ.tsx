@@ -63,7 +63,7 @@ const PopQ: React.FC = () => {
       alert(t("quiz.scoreMessage", { score: data.score, total: data.total }));
     } catch (err) {
       console.error(err);
-      alert(t("quiz.errorMessage"));
+      alert(t("Dan Da Dan!!"));
     } finally {
       setSubmitting(false);
     }
